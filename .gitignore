@@ -1,0 +1,6 @@
+.idea
+*.pyc
+build
+project.egg-info
+resource-monitor.sublime-project
+resource-monitor.sublime-workspace

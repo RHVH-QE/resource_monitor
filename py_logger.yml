@@ -1,0 +1,39 @@
+%YAML 1.2
+---
+
+logging:
+  version: 1
+  disable_existing_loggers: true
+  # Configuring the default (root) logger is highly recommended
+  root:
+    level: !!python/name:logging.NOTSET
+    handlers: [console]
+  loggers:
+    # Logging from my application
+    aria2_hook:
+      level: !!python/name:logging.DEBUG
+      handlers: [logfile]
+      qualname: post_crawl.aria2_download_hook
+      propagate: false
+
+    query_new_build:
+      level: !!python/name:logging.DEBUG
+      handlers: [logfile]
+      qualname: post_crawl.query_new_build
+
+  handlers:
+    logfile:
+      class: logging.FileHandler
+      filename: /tmp/post-crawl.log
+      formatter: simpleFormatter
+      level: !!python/name:logging.NOTSET
+    console:
+      class: logging.StreamHandler
+      stream: ext://sys.stdout
+      formatter: simpleFormatter
+      level: !!python/name:logging.NOTSET
+  formatters:
+    simpleFormatter:
+      class: !!python/name:logging.Formatter
+      format: '[%(name)s]%(asctime)s %(funcName)s %(levelname)s :: %(message)s'
+      datefmt: '%d/%m/%Y %H:%M:%S'
