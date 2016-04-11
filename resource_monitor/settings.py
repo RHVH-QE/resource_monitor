@@ -15,7 +15,7 @@ BOT_NAME = 'resource_monitor'
 SPIDER_MODULES = ['resource_monitor.spiders']
 NEWSPIDER_MODULE = 'resource_monitor.spiders'
 
-_MONGOURI_TEST = 'mongodb://127.0.0.1:27017'
+_MONGOURI_TEST = 'mongodb://127.0.0.1:3001'
 _MONGOURI_PROD = 'mongodb://meteor:redhat@10.66.10.22/meteordb?authMechanism=SCRAM-SHA-1'
 MONGO_URI = _MONGOURI_PROD
 
@@ -32,7 +32,8 @@ SPIDER_NAME_COLLECTION = {
     'ovirt_node': 'resources.ovirt_node',
     'vdsm': 'resources.vdsm',
     'rhevm35': 'resources.rhevm35',
-    'rhevm36': 'resources.rhevm36'
+    'rhevm36': 'resources.rhevm36',
+    'ovirtnodengn36': 'resources.ovirtnodengn36'
 }
 
 
@@ -42,7 +43,8 @@ SPIDER_MAP = {
     'ovirt': 'OvirtNodeSpider',
     'vdsm': 'VDSMSpider',
     'rhevm35': 'Rhevm35',
-    'rhevm36': 'Rhevm36'
+    'rhevm36': 'Rhevm36',
+    'ovirtnodengn36': 'OvirtNodeNgN36Spider'
 }
 
 
