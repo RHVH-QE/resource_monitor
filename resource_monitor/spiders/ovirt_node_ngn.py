@@ -1,20 +1,13 @@
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors.lxmlhtml import LxmlLinkExtractor
+import scrapy
+from scrapy.spiders import CrawlSpider
 from scrapy.selector import Selector
 from resource_monitor.items import OvirtNodeNgnItem
-import scrapy
 
 
 class OvirtNodeNgN36Spider(CrawlSpider):
     name = "ovirtnodengn36"
     allowed_domains = ['ovirt.org']
     start_urls = ["http://jenkins.ovirt.org/job/ovirt-node-ng_ovirt-3.6_build-artifacts-fc22-x86_64/lastSuccessfulBuild/artifact/exported-artifacts/"]
-
-    rules = [
-        # Rule(LxmlLinkExtractor(restrict_xpaths=('//a')),
-        #      callback='parse_node_ng_36')
-    ]
-
 
     def make_requests_from_url(self, url):
         return scrapy.Request(url, callback=self.parse_item)
@@ -53,5 +46,4 @@ class OvirtNodeNgN36Spider(CrawlSpider):
                 item['ngn_tools_url'] = base_url + i.xpath('@href').extract()[0]
             else:
                 pass
-        print item
         yield item
