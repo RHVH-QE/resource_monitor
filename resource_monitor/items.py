@@ -68,7 +68,7 @@ class Rhevm36Item(scrapy.Item):
 class OvirtNodeNgnItem(scrapy.Item):
     ngn_tag = scrapy.Field()
     ngn_squash_url = scrapy.Field()
-    ngn_iso_name = scrapy.Field()
+    build_name = scrapy.Field()
     ngn_iso_url = scrapy.Field()
     ngn_tools_url = scrapy.Field()
     ngn_manifest_url = scrapy.Field()

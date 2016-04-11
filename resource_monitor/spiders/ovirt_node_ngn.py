@@ -2,12 +2,18 @@ import scrapy
 from scrapy.spiders import CrawlSpider
 from scrapy.selector import Selector
 from resource_monitor.items import OvirtNodeNgnItem
-
+from resource_monitor.usr_general_helpers import get_all_names_from_db
+from resource_monitor.settings import SPIDER_NAME_COLLECTION
 
 class OvirtNodeNgN36Spider(CrawlSpider):
     name = "ovirtnodengn36"
     allowed_domains = ['ovirt.org']
     start_urls = ["http://jenkins.ovirt.org/job/ovirt-node-ng_ovirt-3.6_build-artifacts-fc22-x86_64/lastSuccessfulBuild/artifact/exported-artifacts/"]
+
+    def __init__(self):
+        self.all_names = get_all_names_from_db(SPIDER_NAME_COLLECTION[self.name], 'build_name')
+        print self.all_names
+
 
     def make_requests_from_url(self, url):
         return scrapy.Request(url, callback=self.parse_item)
@@ -39,11 +45,14 @@ class OvirtNodeNgN36Spider(CrawlSpider):
                 item['ngn_squash_url'] = base_url + \
                     i.xpath('@href').extract()[0]
             elif len(i.xpath('text()').re(str_installer)) != 0:
-                item['ngn_iso_name'] = i.xpath('@href').extract()[0]
+                item['build_name'] = i.xpath('@href').extract()[0]
                 item['ngn_iso_url'] = base_url + \
                     i.xpath('@href').extract()[0]
             elif len(i.xpath('text()').re(str_tools)) != 0:
                 item['ngn_tools_url'] = base_url + i.xpath('@href').extract()[0]
             else:
                 pass
-        yield item
+        if item['build_name'] in self.all_names:
+            return
+        else:
+            yield item
