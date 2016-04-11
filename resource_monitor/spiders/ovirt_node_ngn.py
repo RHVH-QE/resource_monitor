@@ -10,9 +10,9 @@ class OvirtNodeNgN36Spider(CrawlSpider):
     allowed_domains = ['ovirt.org']
     start_urls = ["http://jenkins.ovirt.org/job/ovirt-node-ng_ovirt-3.6_build-artifacts-fc22-x86_64/lastSuccessfulBuild/artifact/exported-artifacts/"]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(OvirtNodeNgN36Spider, self).__init__(*args, **kwargs)
         self.all_names = get_all_names_from_db(SPIDER_NAME_COLLECTION[self.name], 'build_name')
-        print self.all_names
 
 
     def make_requests_from_url(self, url):
