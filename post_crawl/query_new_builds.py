@@ -22,7 +22,9 @@ SPIDER_NAME_COLLECTION = sac = {
     'vdsm': 'resources.vdsm',
     'rhevm35': 'resources.rhevm35',
     'rhevm36': 'resources.rhevm36',
-    'ngn36': 'resources.ovirtnodengn36'
+    'ngn36': 'resources.ovirtnodengn36',
+    'ngn40': 'resources.ovirtnodengn40',
+    'ngnmaster': 'resources.ovirtnodengnmaster'
 }
 
 REMOTE_PATH_PREFIX = '/var/www/html/monitor/rhevh_build/%s/vdsm%s/%s'
@@ -50,6 +52,8 @@ class PostCrawlJob:
         self.rhevm36 = self.db[sac['rhevm36']]
         self.rhevms = self.db['rhevms']
         self.ngn36 = self.db[sac['ngn36']]
+        self.ngn40 = self.db[sac['ngn40']]
+        self.ngnmaster = self.db[sac['ngnmaster']]
 
     @staticmethod
     def get_new_builds_by_collection(collection):
@@ -100,7 +104,7 @@ class PostCrawlJob:
         return finals
 
     @staticmethod
-    def get_new_ngn36(collection):
+    def get_new_ngn(collection):
         ret = collection.find({"build_downloaded": False})
 
         if ret.count() == 0:
@@ -127,10 +131,10 @@ if __name__ == '__main__':
     retrma = pcj.get_new_rhevm_appliance(pcj.rhevma)
     ret_rhevm35 = pcj.get_new_rhevm(pcj.rhevm35)
     ret_rhevm36 = pcj.get_new_rhevm(pcj.rhevm36)
-    ret_ngn36 = pcj.get_new_ngn36(pcj.ngn36)
-
-    print 123
-    print ret_ngn36
+    ret_ngn36 = pcj.get_new_ngn(pcj.ngn36)
+    ret_ngn40 = pcj.get_new_ngn(pcj.ngn40)
+    ret_ngnmaster = pcj.get_new_ngn(pcj.ngnmaster)
+    ret_ngn = (ret_ngn36, ret_ngn40, ret_ngnmaster)
 
     if ret6:
         for i in ret6:
@@ -181,18 +185,19 @@ if __name__ == '__main__':
             pcj.mark_downloaded_true(pcj.rhevm36, i['build_name'])
             pcj.update_rhevms_host_info('36', i['build_name'], i["build_pkg"].replace('.noarch.rpm', ''))
 
-    if ret_ngn36:
-        for i in ret_ngn36:
-            opts = {"dir": "/var/www/builds/rhevh/ngn/%s" % i['ngn_tag'].replace('.', '_')}
-            # add_download_job(i['ngn_iso_url'], opts)
-            time.sleep(0.5)
-            add_download_job(i['ngn_tools_url'], opts)
-            time.sleep(0.5)
-            add_download_job(i['ngn_squash_url'], opts)
-            time.sleep(0.5)
-            add_download_job(i['ngn_image_url'], opts)
-            time.sleep(0.5)
-            add_download_job(i['ngn_manifest_url'], opts)
-            time.sleep(0.5)
+    for ngn in ret_ngn:
+        if ngn:
+            for i in ngn:
+                opts = {"dir": "/var/www/builds/rhevh/ngn/%s" % i['ngn_tag'].replace('.', '_')}
+                # add_download_job(i['ngn_iso_url'], opts)
+                time.sleep(0.5)
+                add_download_job(i['ngn_tools_url'], opts)
+                time.sleep(0.5)
+                add_download_job(i['ngn_squash_url'], opts)
+                time.sleep(0.5)
+                add_download_job(i['ngn_image_url'], opts)
+                time.sleep(0.5)
+                add_download_job(i['ngn_manifest_url'], opts)
+                time.sleep(0.5)
 
-            pcj.mark_downloaded_true(pcj.ngn36, i['build_name'])
+                pcj.mark_downloaded_true(pcj.ngn36, i['build_name'])

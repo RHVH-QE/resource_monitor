@@ -15,9 +15,9 @@ BOT_NAME = 'resource_monitor'
 SPIDER_MODULES = ['resource_monitor.spiders']
 NEWSPIDER_MODULE = 'resource_monitor.spiders'
 
-_MONGOURI_TEST = 'mongodb://127.0.0.1:3001'
+_MONGOURI_TEST = 'mongodb://127.0.0.1:27017'
 _MONGOURI_PROD = 'mongodb://meteor:redhat@10.66.10.22/meteordb?authMechanism=SCRAM-SHA-1'
-MONGO_URI = _MONGOURI_TEST
+MONGO_URI = _MONGOURI_PROD
 
 MONGO_DATABASE = 'meteordb'
 
