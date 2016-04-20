@@ -189,7 +189,7 @@ if __name__ == '__main__':
         if ngn:
             for i in ngn:
                 opts = {"dir": "/var/www/builds/rhevh/ngn/%s" % i['ngn_tag'].replace('.', '_')}
-                # add_download_job(i['ngn_iso_url'], opts)
+                add_download_job(i['ngn_iso_url'], opts)
                 time.sleep(0.5)
                 add_download_job(i['ngn_tools_url'], opts)
                 time.sleep(0.5)
@@ -200,9 +200,8 @@ if __name__ == '__main__':
                 add_download_job(i['ngn_manifest_url'], opts)
                 time.sleep(0.5)
 
-                if ngn is ret_ngn36:
-                    pcj.mark_downloaded_true(pcj.ngn36, i['build_name'])
-                if ngn is ret_ngn40:
-                    pcj.mark_downloaded_true(pcj.ngn40, i['build_name'])
-                if ngn is ret_ngnmaster:
-                    pcj.mark_downloaded_true(pcj.ngnmaster, i['build_name'])
+                pcj.mark_downloaded_true(pcj.ngn36, i['build_name'])
+
+                pcj.mark_downloaded_true(pcj.ngn40, i['build_name'])
+
+                pcj.mark_downloaded_true(pcj.ngnmaster, i['build_name'])
