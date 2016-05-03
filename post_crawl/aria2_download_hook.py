@@ -36,10 +36,10 @@ text
 
 reboot
 
-%post --erroronfail
+%%post --erroronfail
 imgbase layout --init
 imgbase --experimental volume --create /var 4G
-%end
+%%end
 
 '''
 
