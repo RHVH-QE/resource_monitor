@@ -35,6 +35,17 @@ class RhevhItem(scrapy.Item):
     build_downloaded = scrapy.Field()
 
 
+class RhevhNgnItem(scrapy.Item):
+    build_name = scrapy.Field()
+    build_tag = scrapy.Field()
+    build_status = scrapy.Field()
+    build_ks = scrapy.Field()
+    build_update_rpm = scrapy.Field()
+    build_squashfs_img = scrapy.Field()
+
+    build_downloaded = scrapy.Field()
+
+
 class OvirtNodeItem(scrapy.Item):
     build_name = scrapy.Field()
     build_tag = scrapy.Field()

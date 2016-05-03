@@ -12,6 +12,40 @@ import yaml
 import time
 from mongohelper import MongoHelper
 
+KS_MAUAUL_TPL = '''
+liveimg --url=%s
+
+graphical
+
+'''
+
+KS_AUTO_TPL = '''
+liveimg --url=%s
+
+clearpart --all
+
+autopart --type=thinp
+
+rootpw --plaintext redhat
+
+timezone --utc Asia/Harbin
+
+zerombr
+
+text
+
+reboot
+
+%post --erroronfail
+imgbase layout --init
+imgbase --experimental volume --create /var 4G
+%end
+
+'''
+
+KSM = '/var/www/builds/rhevh/ngn/latest/ngm.ks'
+KSN = '/var/www/builds/rhevh/ngn/latest/ngn.ks'
+
 PATH_PREFIX = '/var/www/builds'
 
 log_conf = yaml.load(open('/etc/py_logger.yml'))
@@ -80,6 +114,22 @@ def rhevh_action(build):
     dest, pxe = prepare_dir(build_name, build_name_trim)
 
     make_pxe(build, dest, pxe)
+
+
+def rhevh_ngn36_action(build):
+
+    http_link = 'http://10.66.10.22:8090/rhevh/rhevh7-ng-36/%s/%s'
+    tmp = build.split('/')
+    link = http_link % (tmp[-2], tmp[-1])
+    log.debug("squashfs link is %s", link)
+    ks_manual = KS_MAUAUL_TPL % link
+    ks_auto = KS_AUTO_TPL % link
+
+    with open(KSM, 'w') as fp:
+        fp.write(ks_manual)
+
+    with open(KSN, 'w') as fp:
+        fp.write(ks_auto)
 
 
 def rhevma_action(build):
@@ -151,7 +201,7 @@ if __name__ == '__main__':
     log.debug('arg build is { %s }' % build)
 
     try:
-        os.remove(build+'.aria2')
+        os.remove(build + '.aria2')
     except OSError:
         log.warning("can not find .aria2 file")
 
@@ -168,6 +218,10 @@ if __name__ == '__main__':
     elif 'rhevm' in build:
         log.info('rhevm action start')
         rhevm_action(build)
+
+    elif build.endswith('squashfs'):
+        log.info('rhevh ngn36 action start')
+        rhevh_ngn36_action(build)
     else:
         pass
 

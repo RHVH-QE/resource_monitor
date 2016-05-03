@@ -2,7 +2,7 @@ import requests
 from scrapy import Request
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors.lxmlhtml import LxmlLinkExtractor
-from resource_monitor.items import RhevhItem
+from resource_monitor.items import RhevhItem, RhevhNgnItem
 from resource_monitor.usr_general_helpers import get_competent_version, get_all_names_from_db
 from resource_monitor.settings import SPIDER_NAME_COLLECTION
 
@@ -74,3 +74,33 @@ class RhevhSpider(CrawlSpider):
 class Rhevh6Spider(RhevhSpider):
     name = 'rhevh6'
     start_urls = ['https://brewweb.engineering.redhat.com/brew/packageinfo?packageID=33636', ]
+
+
+class RhevhNGN36Spider(RhevhSpider):
+    name = "rhevh36ngn"
+    start_urls = ['https://brewweb.engineering.redhat.com/brew/packageinfo?packageID=57825', ]
+
+    def parse_single_build_page(self, response):
+        item = RhevhNgnItem()
+
+        self.formatted_log('Start to parsing page: %s' % response.url)
+
+        item['build_name'] = response.xpath('//h4/a/text()').extract()[0]
+        if item['build_name'] in self.all_names:
+            self.log("%s has been already downloaded" % item['build_name'])
+            return
+
+        item['build_status'] = response.xpath('//th[text()="State"]/following-sibling::td[1]/text()') \
+            .extract()[0].strip()
+        if item['build_status'] == 'complete':
+            item['build_tag'] = response.xpath('//a[contains(@href, "taginfo?tagID")]/text()').extract()[0]
+            item['build_update_rpm'] = response.xpath('//a[text()="download"]/@href').re('(.+\.iso|.+\.noarch.rpm)')[0]
+            item['build_ks'] = response.xpath('//a[text()="download"]/@href').re('(.+\.ks)')
+            item['build_squashfs_img'] = response.xpath('//a[text()="download"]/@href').re('(.+\.squashfs)')[0]
+            item['build_downloaded'] = True
+
+            yield item
+        else:
+            item['build_tag'] = 'No Tag Found'
+            item['build_squashfs_img'] = 'No ISO available, due to build status is not complete'
+            return

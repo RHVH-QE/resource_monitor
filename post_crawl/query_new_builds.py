@@ -22,6 +22,7 @@ SPIDER_NAME_COLLECTION = sac = {
     'vdsm': 'resources.vdsm',
     'rhevm35': 'resources.rhevm35',
     'rhevm36': 'resources.rhevm36',
+    'rhevh36ngn': 'resources.rhevh36ngn',
     'ngn36': 'resources.ovirtnodengn36',
     'ngn40': 'resources.ovirtnodengn40',
     'ngnmaster': 'resources.ovirtnodengnmaster'
@@ -53,16 +54,22 @@ class PostCrawlJob:
         self.rhevms = self.db['rhevms']
         self.ngn36 = self.db[sac['ngn36']]
         self.ngn40 = self.db[sac['ngn40']]
+        self.rhevh36ngn = self.db[sac['rhevh36ngn']]
         self.ngnmaster = self.db[sac['ngnmaster']]
 
     @staticmethod
-    def get_new_builds_by_collection(collection):
+    def get_new_builds_by_collection(collection, rhevh67=True):
         ret = collection.find({"build_downloaded": False})
 
         if ret.count() == 0:
             return False
 
         finals = []
+
+        if not rhevh67:
+            for i in ret:
+                finals.append(i)
+            return finals
 
         for i in ret:
             if i['build_ovirt_node_version'] == 'No oVirt-Node version found':
@@ -135,6 +142,7 @@ if __name__ == '__main__':
     ret_ngn40 = pcj.get_new_ngn(pcj.ngn40)
     ret_ngnmaster = pcj.get_new_ngn(pcj.ngnmaster)
     ret_ngn = (ret_ngn36, ret_ngn40, ret_ngnmaster)
+    ret_rhevh36ngn = pcj.get_new_builds_by_collection(pcj.rhevh36ngn, rhevh67=False)
 
     if ret6:
         for i in ret6:
@@ -145,6 +153,15 @@ if __name__ == '__main__':
         for i in ret7:
             add_download_job(i['build_iso'])
             pcj.mark_downloaded_true(pcj.rhevh7, i['build_name'])
+
+    if ret_rhevh36ngn:
+        for i in ret_rhevh36ngn:
+            dst_dir = {"dir": "/var/www/builds/rhevh/rhevh7-ng-36/%s" % i['build_name']}
+            add_download_job(i['build_update_rpm'], opts=dst_dir)
+            add_download_job(i['build_squashfs_img'], opts=dst_dir)
+            for ks in i['build_ks']:
+                add_download_job(ks, opts=dst_dir)
+            pcj.mark_downloaded_true(pcj.rhevh36ngn, i['build_name'])
 
     if retrma:
         for i in retrma:

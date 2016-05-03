@@ -33,6 +33,7 @@ SPIDER_NAME_COLLECTION = {
     'vdsm': 'resources.vdsm',
     'rhevm35': 'resources.rhevm35',
     'rhevm36': 'resources.rhevm36',
+    'rhevh36ngn': 'resources.rhevh36ngn',
     'ovirtnodengn36': 'resources.ovirtnodengn36',
     'ovirtnodengn40': 'resources.ovirtnodengn40',
     'ovirtnodengnmaster': 'resources.ovirtnodengnmaster'
@@ -46,6 +47,7 @@ SPIDER_MAP = {
     'vdsm': 'VDSMSpider',
     'rhevm35': 'Rhevm35',
     'rhevm36': 'Rhevm36',
+    'rhevh36ngn': 'RhevhNGN36Spider',
     'ovirtnodengn36': 'OvirtNodeNgN36Spider',
     'ovirtnodengn40': 'OvirtNodeNgN40Spider',
     'ovirtnodengnmaster': 'OvirtNodeNgNMasterSpider'
