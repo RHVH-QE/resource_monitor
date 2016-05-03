@@ -97,7 +97,7 @@ class RhevhNGN36Spider(RhevhSpider):
             item['build_update_rpm'] = response.xpath('//a[text()="download"]/@href').re('(.+\.iso|.+\.noarch.rpm)')[0]
             item['build_ks'] = response.xpath('//a[text()="download"]/@href').re('(.+\.ks)')
             item['build_squashfs_img'] = response.xpath('//a[text()="download"]/@href').re('(.+\.squashfs)')[0]
-            item['build_downloaded'] = True
+            item['build_downloaded'] = False
 
             yield item
         else:
