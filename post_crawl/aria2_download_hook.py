@@ -135,13 +135,13 @@ def rhevh_ngn36_action(build):
 def rhevma_action(build):
     build_name = os.path.basename(build)
     version = '00'
-    ret = m.rhevm_appliance.find_one({'build_ova_url': re.compile(build_name)})
+    ret = m.rhevm_appliance.find_one({'build_rpm_url': re.compile(build_name)})
     if ret:
         version = re.findall(r'-(\d\.\d)-', ret['build_tag'])[0]
 
     log.debug('version is %s' % version)
 
-    build_new = build_name.replace('rhevm-appliance-', '').replace('.x86_64', '').replace('rhevm', version)
+    build_new = build_name.replace('rhevm-appliance-', '').replace('.x86_64', '').replace('noarch', version)
     log.debug('new rhevma build name is %s' % build_new)
 
     renamed_build = os.path.join(os.path.dirname(build), build_new)

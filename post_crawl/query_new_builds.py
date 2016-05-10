@@ -165,7 +165,7 @@ if __name__ == '__main__':
 
     if retrma:
         for i in retrma:
-            add_download_job(i['build_ova_url'], opts={"dir": "/var/www/builds/rhevm-appliance"})
+            add_download_job(i['build_rpm_url'], opts={"dir": "/var/www/builds/rhevm-appliance"})
             pcj.mark_downloaded_true(pcj.rhevma, i['build_name'])
 
     if ret_rhevm35:

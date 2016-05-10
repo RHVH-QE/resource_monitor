@@ -46,6 +46,7 @@ class RhevmAppliance(CrawlSpider):
                 item['build_tag'] = "No Tags Found"
 
             item['build_ova_url'] = response.xpath('//a[text()="download"]/@href').re('(.+\.ova)')[0]
+            item['build_rpm_url'] = response.xpath('//a[text()="download"]/@href').re('(.+\.noarch.rpm)')[0]
 
             item['build_downloaded'] = False
 

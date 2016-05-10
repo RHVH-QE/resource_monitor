@@ -14,6 +14,7 @@ class RhevmApplianceItem(scrapy.Item):
     build_status = scrapy.Field()
     build_ova_url = scrapy.Field()
     build_downloaded = scrapy.Field()
+    build_rpm_url = scrapy.Field()
 
 
 class RhevhItem(scrapy.Item):
