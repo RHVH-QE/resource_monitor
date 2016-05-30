@@ -205,7 +205,7 @@ if __name__ == '__main__':
     for ngn in ret_ngn:
         if ngn:
             for i in ngn:
-                opts = {"dir": "/var/www/builds/rhevh/ngn/%s" % i['ngn_tag'].replace('.', '_')}
+                opts = {"dir": "/var/www/builds/rhevh/ngn/%s" % i['build_name']}
                 add_download_job(i['ngn_iso_url'], opts)
                 time.sleep(0.5)
                 add_download_job(i['ngn_tools_url'], opts)
