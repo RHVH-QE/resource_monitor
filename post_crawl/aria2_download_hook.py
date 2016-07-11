@@ -104,6 +104,9 @@ def make_pxe(src, dest, pxe):
         r = glob.glob('r*.iso')
         if len(r) == 1:
             sp.call('sudo livecd-iso-to-pxeboot %s' % os.path.join(dest, r[0]), shell=True)
+            a = dest.rstrip('/').split('/')
+            a1, a2 = a[-2], a[-1]
+            sp.call('/home/dracher/bin/createpxe.sh %s %s' % (a1, a2), shell=True)
 
 
 def rhevh_action(build):

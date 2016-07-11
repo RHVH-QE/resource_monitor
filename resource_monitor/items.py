@@ -77,6 +77,12 @@ class Rhevm36Item(scrapy.Item):
     build_downloaded = scrapy.Field()
 
 
+class Rhevm40Item(scrapy.Item):
+    build_name = scrapy.Field()
+    build_links = scrapy.Field()
+    build_downloaded = scrapy.Field()
+
+
 class OvirtNodeNgnItem(scrapy.Item):
     ngn_tag = scrapy.Field()
     ngn_squash_url = scrapy.Field()

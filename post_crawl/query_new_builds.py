@@ -22,6 +22,7 @@ SPIDER_NAME_COLLECTION = sac = {
     'vdsm': 'resources.vdsm',
     'rhevm35': 'resources.rhevm35',
     'rhevm36': 'resources.rhevm36',
+    'rhevm40': 'resources.rhevm40',
     'rhevh36ngn': 'resources.rhevh36ngn',
     'ngn36': 'resources.ovirtnodengn36',
     'ngn40': 'resources.ovirtnodengn40',
@@ -51,6 +52,7 @@ class PostCrawlJob:
         self.vdsm = self.db[sac['vdsm']]
         self.rhevm35 = self.db[sac['rhevm35']]
         self.rhevm36 = self.db[sac['rhevm36']]
+        self.rhevm40 = self.db[sac['rhevm40']]
         self.rhevms = self.db['rhevms']
         self.ngn36 = self.db[sac['ngn36']]
         self.ngn40 = self.db[sac['ngn40']]
@@ -138,6 +140,7 @@ if __name__ == '__main__':
     retrma = pcj.get_new_rhevm_appliance(pcj.rhevma)
     ret_rhevm35 = pcj.get_new_rhevm(pcj.rhevm35)
     ret_rhevm36 = pcj.get_new_rhevm(pcj.rhevm36)
+    ret_rhevm40 = pcj.get_new_rhevm(pcj.rhevm40)
     ret_ngn36 = pcj.get_new_ngn(pcj.ngn36)
     ret_ngn40 = pcj.get_new_ngn(pcj.ngn40)
     ret_ngnmaster = pcj.get_new_ngn(pcj.ngnmaster)
@@ -201,6 +204,9 @@ if __name__ == '__main__':
 
             pcj.mark_downloaded_true(pcj.rhevm36, i['build_name'])
             pcj.update_rhevms_host_info('36', i['build_name'], i["build_pkg"].replace('.noarch.rpm', ''))
+
+    if ret_rhevm40:
+        print ret_rhevm40
 
     for ngn in ret_ngn:
         if ngn:

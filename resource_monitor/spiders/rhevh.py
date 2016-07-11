@@ -78,7 +78,7 @@ class Rhevh6Spider(RhevhSpider):
 
 class RhevhNGN36Spider(RhevhSpider):
     name = "rhevh36ngn"
-    start_urls = ['https://brewweb.engineering.redhat.com/brew/packageinfo?packageID=57825', ]
+    start_urls = ['https://brewweb.engineering.redhat.com/brew/packageinfo?packageID=58439', ]
 
     def parse_single_build_page(self, response):
         item = RhevhNgnItem()
