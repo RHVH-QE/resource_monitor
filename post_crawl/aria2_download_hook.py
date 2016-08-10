@@ -122,6 +122,8 @@ def rhevh_action(build):
 def rhevh_ngn36_action(build):
 
     http_link = 'http://10.66.10.22:8090/rhevh/rhevh7-ng-36/%s/%s'
+    updates_rpm_dir = '/var/www/builds/rhvhupgrade/updates'
+
     tmp = build.split('/')
     link = http_link % (tmp[-2], tmp[-1])
     log.debug("squashfs link is %s", link)
@@ -133,6 +135,9 @@ def rhevh_ngn36_action(build):
 
     with open(KSN, 'w') as fp:
         fp.write(ks_auto)
+
+    if "image-update" in build:
+        sp.call('mv %s %s' % (build, updates_rpm_dir), shell=True)
 
 
 def rhevma_action(build):
