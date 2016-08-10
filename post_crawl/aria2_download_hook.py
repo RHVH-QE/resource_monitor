@@ -143,7 +143,7 @@ def rhevh_ngn36_update_action(build):
     build_name = os.path.basename(build)
     update_repo_dir = '/var/www/builds/rhvhupgrade/rhvh/4/os/Packages'
 
-    update_rpm_path = os.path.join(update_repo_dir, build_name)
+    update_rpm_path = os.path.join(updates_rpm_dir, build_name)
 
     cmd = 'mv %s %s' % (build, updates_rpm_dir)
     log.debug("run cmd: %s", cmd)
