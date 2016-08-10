@@ -94,7 +94,7 @@ class RhevhNGN36Spider(RhevhSpider):
             .extract()[0].strip()
         if item['build_status'] == 'complete':
             item['build_tag'] = response.xpath('//a[contains(@href, "taginfo?tagID")]/text()').extract()[0]
-            item['build_update_rpm'] = response.xpath('//a[text()="download"]/@href').re('(.+\.iso|.+\.noarch.rpm)')[0]
+            item['build_update_rpm'] = response.xpath('//a[text()="download"]/@href').re('(.+redhat-virtualization-host-image-update.+)')[0]
             item['build_ks'] = response.xpath('//a[text()="download"]/@href').re('(.+\.ks)')
             item['build_squashfs_img'] = response.xpath('//a[text()="download"]/@href').re('(.+\.squashfs)')[0]
             item['build_downloaded'] = False
