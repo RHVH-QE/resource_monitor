@@ -122,7 +122,7 @@ def rhevh_action(build):
 def rhevh_ngn36_action(build):
 
     http_link = 'http://10.66.10.22:8090/rhevh/rhevh7-ng-36/%s/%s'
-    updates_rpm_dir = '/var/www/builds/rhvhupgrade/updates'
+    
 
     tmp = build.split('/')
     link = http_link % (tmp[-2], tmp[-1])
@@ -136,8 +136,14 @@ def rhevh_ngn36_action(build):
     with open(KSN, 'w') as fp:
         fp.write(ks_auto)
 
-    if "image-update" in build:
-        sp.call('mv %s %s' % (build, updates_rpm_dir), shell=True)
+    
+
+def rhevh_ngn36_update_action(build):
+    updates_rpm_dir = '/var/www/builds/rhvhupgrade/updates'
+
+    cmd = 'mv %s %s' % (build, updates_rpm_dir)
+    log.debug("run cmd: %s", cmd)
+    sp.call(cmd, shell=True)
 
 
 def rhevma_action(build):
@@ -206,7 +212,7 @@ def rhevm_action(build):
 
 if __name__ == '__main__':
     build = sys.argv[-1]
-    log.debug('arg build is { %s }' % build)
+    log.debug('arg build is { %s }', build)
 
     try:
         os.remove(build + '.aria2')
@@ -230,6 +236,10 @@ if __name__ == '__main__':
     elif build.endswith('squashfs'):
         log.info('rhevh ngn36 action start')
         rhevh_ngn36_action(build)
+
+    elif "image-update" in build and build.endswith('.rpm'):
+        log.info("rhevh_ngn36_update_action start")
+        rhevh_ngn36_update_action(build)
     else:
         pass
 
