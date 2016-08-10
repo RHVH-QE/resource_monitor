@@ -140,10 +140,19 @@ def rhevh_ngn36_action(build):
 
 def rhevh_ngn36_update_action(build):
     updates_rpm_dir = '/var/www/builds/rhvhupgrade/updates'
+    build_name = os.path.basename(build)
+    update_repo_dir = '/var/www/builds/rhvhupgrade/rhvh/4/os/Packages'
+
+    update_rpm_path = os.path.join(update_repo_dir, build_name)
 
     cmd = 'mv %s %s' % (build, updates_rpm_dir)
     log.debug("run cmd: %s", cmd)
     sp.call(cmd, shell=True)
+
+    os.chdir(update_repo_dir)
+    cmd2 = "ln -sf %s redhat-virtualization-host-image-update-latest.rpm" % update_rpm_path
+    sp.call(cmd2, shell=True)
+    sp.call('rm -rf repodata && createrepo .', shell=True)
 
 
 def rhevma_action(build):
