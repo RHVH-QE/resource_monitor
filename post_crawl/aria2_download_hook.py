@@ -38,7 +38,6 @@ reboot
 
 %%post --erroronfail
 imgbase layout --init
-imgbase --experimental volume --create /var 4G
 %%end
 
 '''
