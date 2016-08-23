@@ -129,12 +129,18 @@ class Rhevm40(CrawlSpider):
 
     def parse_start_url(self, response):
         r_body = response.body
-        status = r_body.strip().split('\n')[0]
-
         item = Rhevm40Item()
-        item['build_name'] = r_body.strip().split('\n')[-1].split('=')[-1]
+
+        build_name = re.findall(r'\[(4.+)\]', r_body)
+
+        if build_name:
+            item['build_name'] = build_name[0]
+        else:
+            item['build_name'] = "ERROR"
+
         item['build_links'] = 'http://bob.eng.lab.tlv.redhat.com/builds/latest_4.0/rhev-release-latest-4.0.noarch.rpm'
-        if "Ready" not in status \
+
+        if "Ready" not in r_body \
                 or item['build_name'] in self.all_names:
             return
 
