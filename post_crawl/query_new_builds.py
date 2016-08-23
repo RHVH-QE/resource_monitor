@@ -1,5 +1,6 @@
 #!/home/dracher/Projects/vEnvs/vScrapy/bin/python
 # -*- coding: utf-8 -*
+import os
 import time
 import xmlrpclib
 import pymongo
@@ -206,7 +207,11 @@ if __name__ == '__main__':
             pcj.update_rhevms_host_info('36', i['build_name'], i["build_pkg"].replace('.noarch.rpm', ''))
 
     if ret_rhevm40:
-        print ret_rhevm40
+        tower_cli = "/home/dracher/Projects/vEnvs/vScrapy/bin/tower-cli"
+
+        for i in ret_rhevm40:
+            os.system("%s job launch --job-template=25" % tower_cli)
+            pcj.mark_downloaded_true(pcj.rhevm40, i['build_name'])
 
     for ngn in ret_ngn:
         if ngn:
