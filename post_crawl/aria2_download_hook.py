@@ -120,8 +120,7 @@ def rhevh_action(build):
 
 def rhevh_ngn36_action(build):
 
-    http_link = 'http://10.66.10.22:8090/rhevh/rhevh7-ng-36/%s/%s'
-    
+    http_link = 'http://10.66.10.22:8090/rhvh_ngn/squashimg/%s/%s'
 
     tmp = build.split('/')
     link = http_link % (tmp[-2], tmp[-1])
@@ -135,7 +134,6 @@ def rhevh_ngn36_action(build):
     with open(KSN, 'w') as fp:
         fp.write(ks_auto)
 
-    
 
 def rhevh_ngn36_update_action(build):
     updates_rpm_dir = '/var/www/builds/rhvhupgrade/updates'
@@ -193,7 +191,7 @@ def rhevm_action(build):
           '-e rhevm36_version=\'{ver36}\'  -i /home/dracher/bin/rhevmhosts ' \
           '{ansible_project}pb_upgrade_rhevm_{ver}.yml"'
 
-    # the biggest rpm      
+    # the biggest rpm
     check = 'jasperreports' in build
 
     if check:
