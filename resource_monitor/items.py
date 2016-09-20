@@ -92,3 +92,8 @@ class OvirtNodeNgnItem(scrapy.Item):
     ngn_manifest_url = scrapy.Field()
     ngn_image_url = scrapy.Field()
     build_downloaded = scrapy.Field()
+
+
+class Rhvh4ISOItem(scrapy.Item):
+    build_name = scrapy.Field()
+    build_downloaded = scrapy.Field()

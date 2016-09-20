@@ -18,7 +18,8 @@ class RhevhSpider(CrawlSpider):
 
     rules = (
         Rule(LxmlLinkExtractor(restrict_xpaths=('//a[contains(@href, "buildinfo")]', )),
-             callback='parse_single_build_page'),)
+             callback='parse_single_build_page'),
+    )
 
     def __init__(self, *args, **kwargs):
         super(RhevhSpider, self).__init__(*args, **kwargs)

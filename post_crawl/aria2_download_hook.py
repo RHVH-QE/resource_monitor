@@ -7,7 +7,6 @@ import logging
 import logging.config
 import glob
 import subprocess as sp
-import pymongo
 import yaml
 import time
 from mongohelper import MongoHelper

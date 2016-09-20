@@ -1,7 +1,7 @@
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors.lxmlhtml import LxmlLinkExtractor
 from resource_monitor.items import OvirtNodeItem
-from resource_monitor.usr_general_helpers import get_competent_version, get_all_names_from_db
+from resource_monitor.usr_general_helpers import get_all_names_from_db
 from resource_monitor.settings import SPIDER_NAME_COLLECTION
 
 

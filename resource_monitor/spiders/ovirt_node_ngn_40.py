@@ -5,6 +5,7 @@ from resource_monitor.items import OvirtNodeNgnItem
 from resource_monitor.usr_general_helpers import get_all_names_from_db
 from resource_monitor.settings import SPIDER_NAME_COLLECTION
 
+
 class OvirtNodeNgN40Spider(CrawlSpider):
     name = "ovirtnodengn40"
     allowed_domains = ['ovirt.org']
@@ -13,7 +14,6 @@ class OvirtNodeNgN40Spider(CrawlSpider):
     def __init__(self, *args, **kwargs):
         super(OvirtNodeNgN40Spider, self).__init__(*args, **kwargs)
         self.all_names = get_all_names_from_db(SPIDER_NAME_COLLECTION[self.name], 'build_name')
-
 
     def make_requests_from_url(self, url):
         return scrapy.Request(url, callback=self.parse_item)
