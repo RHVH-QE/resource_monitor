@@ -7,21 +7,24 @@ from resource_monitor.settings import SPIDER_NAME_COLLECTION
 
 class RhevmAppliance(CrawlSpider):
     name = 'rhevm_appliance'
-    allowed_domains = ['brewweb.engineering.redhat.com',
-                       'download.engineering.redhat.com']
+    allowed_domains = [
+        'brewweb.engineering.redhat.com', 'download.engineering.redhat.com'
+    ]
 
-    start_urls = ['https://brewweb.engineering.redhat.com/brew/packageinfo?packageID=48429']
+    #start_urls = ['https://brewweb.engineering.redhat.com/brew/packageinfo?packageID=48429']
+    start_urls = [
+        'https://brewweb.engineering.redhat.com/brew/packageinfo?packageID=61133'
+    ]
 
-    rules = (
-        Rule(
-            LxmlLinkExtractor(restrict_xpaths=('//a[contains(@href, "buildinfo")]',)),
-            callback='parse_single_build_page'
-        ),
-    )
+    rules = (Rule(
+        LxmlLinkExtractor(restrict_xpaths=(
+            '//a[contains(@href, "buildinfo")]', )),
+        callback='parse_single_build_page'), )
 
     def __init__(self, *args, **kwargs):
         super(RhevmAppliance, self).__init__(*args, **kwargs)
-        self.all_names = get_all_names_from_db(SPIDER_NAME_COLLECTION[self.name], 'build_name')
+        self.all_names = get_all_names_from_db(
+            SPIDER_NAME_COLLECTION[self.name], 'build_name')
 
     def parse_single_build_page(self, response):
 
@@ -38,15 +41,18 @@ class RhevmAppliance(CrawlSpider):
 
         if item['build_status'] == 'complete':
 
-            item['build_tag'] = response.xpath('//a[contains(@href, "taginfo?tagID")]/text()').extract()
+            item['build_tag'] = response.xpath(
+                '//a[contains(@href, "taginfo?tagID")]/text()').extract()
 
             if item['build_tag']:
                 item['build_tag'] = item['build_tag'][0]
             else:
                 item['build_tag'] = "No Tags Found"
 
-            item['build_ova_url'] = response.xpath('//a[text()="download"]/@href').re('(.+\.ova)')[0]
-            item['build_rpm_url'] = response.xpath('//a[text()="download"]/@href').re('(.+\.noarch.rpm)')[0]
+            item['build_ova_url'] = response.xpath(
+                '//a[text()="download"]/@href').re('(.+\.ova)')[0]
+            item['build_rpm_url'] = response.xpath(
+                '//a[text()="download"]/@href').re('(.+\.noarch.rpm)')[0]
 
             item['build_downloaded'] = False
 
