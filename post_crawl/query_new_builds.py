@@ -27,7 +27,8 @@ SPIDER_NAME_COLLECTION = sac = {
     'rhevh36ngn': 'resources.rhevh36ngn',
     'ngn36': 'resources.ovirtnodengn36',
     'ngn40': 'resources.ovirtnodengn40',
-    'ngnmaster': 'resources.ovirtnodengnmaster'
+    'ngnmaster': 'resources.ovirtnodengnmaster',
+    'rhvh_iso': 'resources.rhvh4_iso'
 }
 
 REMOTE_PATH_PREFIX = '/var/www/html/monitor/rhevh_build/%s/vdsm%s/%s'
@@ -59,6 +60,7 @@ class PostCrawlJob:
         self.ngn40 = self.db[sac['ngn40']]
         self.rhevh36ngn = self.db[sac['rhevh36ngn']]
         self.ngnmaster = self.db[sac['ngnmaster']]
+        self.rhvh_iso = self.db[sac['rhvh_iso']]
 
     @staticmethod
     def get_new_builds_by_collection(collection, rhevh67=True):
@@ -126,11 +128,31 @@ class PostCrawlJob:
         return finals
 
     @staticmethod
+    def get_new_rhvh_iso(collection):
+        ret = collection.find({"build_downloaded": False})
+        if ret.count() == 0:
+            return False
+        finals = []
+        for i in ret:
+            finals.append(i)
+
+        return finals
+
+    @staticmethod
     def mark_downloaded_true(collection, build_name):
-        collection.update({"build_name": build_name}, {"$set": {"build_downloaded": True}})
+        collection.update({
+            "build_name": build_name
+        }, {"$set": {
+            "build_downloaded": True
+        }})
 
     def update_rhevms_host_info(self, tag, x, y):
-        self.rhevms.update_many({'tag': tag}, {"$set": {"rhevm_version": x, "package_version": y}})
+        self.rhevms.update_many({
+            'tag': tag
+        }, {"$set": {
+            "rhevm_version": x,
+            "package_version": y
+        }})
 
 
 if __name__ == '__main__':
@@ -146,7 +168,9 @@ if __name__ == '__main__':
     ret_ngn40 = pcj.get_new_ngn(pcj.ngn40)
     ret_ngnmaster = pcj.get_new_ngn(pcj.ngnmaster)
     ret_ngn = (ret_ngn36, ret_ngn40, ret_ngnmaster)
-    ret_rhevh36ngn = pcj.get_new_builds_by_collection(pcj.rhevh36ngn, rhevh67=False)
+    ret_rhevh36ngn = pcj.get_new_builds_by_collection(
+        pcj.rhevh36ngn, rhevh67=False)
+    ret_rhvh_iso = pcj.get_new_rhvh_iso(pcj.rhvh_iso)
 
     if ret6:
         for i in ret6:
@@ -160,7 +184,10 @@ if __name__ == '__main__':
 
     if ret_rhevh36ngn:
         for i in ret_rhevh36ngn:
-            dst_dir = {"dir": "/var/www/builds/rhvh_ngn/squashimg/%s" % i['build_name']}
+            dst_dir = {
+                "dir":
+                "/var/www/builds/rhvh_ngn/squashimg/%s" % i['build_name']
+            }
             add_download_job(i['build_update_rpm'], opts=dst_dir)
             add_download_job(i['build_squashfs_img'], opts=dst_dir)
             for ks in i['build_ks']:
@@ -169,7 +196,9 @@ if __name__ == '__main__':
 
     if retrma:
         for i in retrma:
-            add_download_job(i['build_rpm_url'], opts={"dir": "/var/www/builds/rhevm-appliance"})
+            add_download_job(
+                i['build_rpm_url'],
+                opts={"dir": "/var/www/builds/rhevm-appliance"})
             pcj.mark_downloaded_true(pcj.rhevma, i['build_name'])
 
     if ret_rhevm35:
@@ -178,7 +207,10 @@ if __name__ == '__main__':
             links = i['build_links'].split(',')
             prefix = links[0]
 
-            opts = {"dir": "/var/www/builds/rhevm/3.5/%s/el6" % prefix.rstrip('/').replace('/builds/', '')}
+            opts = {
+                "dir": "/var/www/builds/rhevm/3.5/%s/el6" %
+                prefix.rstrip('/').replace('/builds/', '')
+            }
 
             for url in links[1:]:
                 if url.startswith('rhevm-appliance') or url.endswith('.html'):
@@ -187,7 +219,9 @@ if __name__ == '__main__':
                 time.sleep(0.5)
 
             pcj.mark_downloaded_true(pcj.rhevm35, i['build_name'])
-            pcj.update_rhevms_host_info('35', i['build_name'], i["build_pkg"].replace('.noarch.rpm', ''))
+            pcj.update_rhevms_host_info('35', i['build_name'],
+                                        i["build_pkg"].replace('.noarch.rpm',
+                                                               ''))
 
     if ret_rhevm36:
         url_link = "http://bob.eng.lab.tlv.redhat.com%snoarch/%s"
@@ -195,7 +229,10 @@ if __name__ == '__main__':
             links = i['build_links'].split(',')
             prefix = links[0]
 
-            opts = {"dir": "/var/www/builds/rhevm/%s" % prefix.rstrip('/').replace('/builds/', '')}
+            opts = {
+                "dir": "/var/www/builds/rhevm/%s" %
+                prefix.rstrip('/').replace('/builds/', '')
+            }
 
             for url in links[1:]:
                 if url.startswith('rhevm-appliance'):
@@ -204,7 +241,9 @@ if __name__ == '__main__':
                 time.sleep(0.5)
 
             pcj.mark_downloaded_true(pcj.rhevm36, i['build_name'])
-            pcj.update_rhevms_host_info('36', i['build_name'], i["build_pkg"].replace('.noarch.rpm', ''))
+            pcj.update_rhevms_host_info('36', i['build_name'],
+                                        i["build_pkg"].replace('.noarch.rpm',
+                                                               ''))
 
     if ret_rhevm40:
         tower_cli = "/home/dracher/Projects/vEnvs/vScrapy/bin/tower-cli"
@@ -216,7 +255,10 @@ if __name__ == '__main__':
     for ngn in ret_ngn:
         if ngn:
             for i in ngn:
-                opts = {"dir": "/var/www/builds/rhvh_ngn/squashimg/%s" % i['build_name']}
+                opts = {
+                    "dir":
+                    "/var/www/builds/rhvh_ngn/squashimg/%s" % i['build_name']
+                }
                 add_download_job(i['ngn_iso_url'], opts)
                 time.sleep(0.5)
                 add_download_job(i['ngn_tools_url'], opts)
@@ -233,3 +275,14 @@ if __name__ == '__main__':
                 pcj.mark_downloaded_true(pcj.ngn40, i['build_name'])
 
                 pcj.mark_downloaded_true(pcj.ngnmaster, i['build_name'])
+
+    if ret_rhvh_iso:
+        iso_url_tpl = ("http://download-ipv4.eng.brq.redhat.com/"
+                       "devel/candidate-trees/{}/compose/RHVH/"
+                       "x86_64/iso/{}-RHVH-x86_64-dvd1.iso")
+        dst_dir = {"dir": "/var/www/builds/rhvh_ngn/iso/"}
+        for i in ret_rhvh_iso:
+            add_download_job(
+                iso_url_tpl.format(i['build_name'], i['build_name']),
+                opts=dst_dir)
+            pcj.mark_downloaded_true(pcj.rhvh_iso, i['build_name'])
