@@ -9,20 +9,21 @@ class Rhvh4ISO(CrawlSpider):
     name = "rhvh4_iso"
     allowed_domains = ["download-node-02.eng.bos.redhat.com", ]
 
-    start_urls = ["http://download-node-02.eng.bos.redhat.com/devel/candidate-trees/", ]
+    start_urls = [
+        "http://download-node-02.eng.bos.redhat.com/devel/candidate-trees/",
+    ]
 
-    rules = (
-        Rule(LxmlLinkExtractor(restrict_xpaths=("//a[starts-with(@href, 'RHVH-4.0')]", ),),
-             callback='parse_link',),
-    )
+    rules = (Rule(
+        LxmlLinkExtractor(
+            restrict_xpaths=("//a[starts-with(@href, 'RHVH-4.1')]", ), ),
+        callback='parse_link', ), )
 
     def __init__(self, *args, **kwargs):
         super(Rhvh4ISO, self).__init__(*args, **kwargs)
-        self.all_names = get_all_names_from_db(SPIDER_NAME_COLLECTION[self.name], 'build_name')
+        self.all_names = get_all_names_from_db(
+            SPIDER_NAME_COLLECTION[self.name], 'build_name')
 
     def parse_link(self, response):
-        # links = [link.extract().strip('/')
-        #          for link in response.xpath("//a[starts-with(@href, 'RHVH-4.0')]/text()")]
         item = Rhvh4ISOItem()
         url = response.url
 
@@ -32,5 +33,4 @@ class Rhvh4ISO(CrawlSpider):
             return
 
         item['build_downloaded'] = False
-
         yield item
