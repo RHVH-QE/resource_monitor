@@ -59,10 +59,18 @@ def build_tag(x, y):
     ret = None
     if x.startswith('6'):
         ret = m.rhevh6.find_one({'build_name': y})
-        m.rhevh6.update_one({'build_name': y}, {'$set': {'build_downloaded': True}})
+        m.rhevh6.update_one({
+            'build_name': y
+        }, {'$set': {
+            'build_downloaded': True
+        }})
     if x.startswith('7'):
         ret = m.rhevh7.find_one({'build_name': y})
-        m.rhevh7.update_one({'build_name': y}, {'$set': {'build_downloaded': True}})
+        m.rhevh7.update_one({
+            'build_name': y
+        }, {'$set': {
+            'build_downloaded': True
+        }})
 
     pattern = re.compile(r'-(\d.\d)-')
     tag = '00'
@@ -101,10 +109,13 @@ def make_pxe(src, dest, pxe):
 
         r = glob.glob('r*.iso')
         if len(r) == 1:
-            sp.call('sudo livecd-iso-to-pxeboot %s' % os.path.join(dest, r[0]), shell=True)
+            sp.call(
+                'sudo livecd-iso-to-pxeboot %s' % os.path.join(dest, r[0]),
+                shell=True)
             a = dest.rstrip('/').split('/')
             a1, a2 = a[-2], a[-1]
-            sp.call('/home/dracher/bin/createpxe.sh %s %s' % (a1, a2), shell=True)
+            sp.call(
+                '/home/dracher/bin/createpxe.sh %s %s' % (a1, a2), shell=True)
 
 
 def rhevh_action(build):
@@ -160,7 +171,8 @@ def rhevma_action(build):
 
     log.debug('version is %s' % version)
 
-    build_new = build_name.replace('rhevm-appliance-', '').replace('.x86_64', '').replace('noarch', version)
+    build_new = build_name.replace('rhevm-appliance-', '').replace(
+        '.x86_64', '').replace('noarch', version)
     log.debug('new rhevma build name is %s' % build_new)
 
     renamed_build = os.path.join(os.path.dirname(build), build_new)
@@ -200,19 +212,35 @@ def rhevm_action(build):
         sp.call("/usr/bin/createrepo %s" % os.path.dirname(build), shell=True)
 
         if '3.5' in build:
-            cmd_ = cmd.format(ansible_playbook=ansible_playbook,
-                              ver35=version, ver36='',
-                              ansible_project=ansible_project,
-                              ver=35)
+            cmd_ = cmd.format(
+                ansible_playbook=ansible_playbook,
+                ver35=version,
+                ver36='',
+                ansible_project=ansible_project,
+                ver=35)
             log.debug('cmd_ is %s' % cmd_)
             sp.call(cmd_, shell=True, executable='/bin/bash')
         if '3.6' in build:
-            cmd_ = cmd.format(ansible_playbook=ansible_playbook,
-                              ver35='', ver36=version,
-                              ansible_project=ansible_project,
-                              ver=36)
+            cmd_ = cmd.format(
+                ansible_playbook=ansible_playbook,
+                ver35='',
+                ver36=version,
+                ansible_project=ansible_project,
+                ver=36)
             log.debug('cmd_ is %s' % cmd_)
             sp.call(cmd_, shell=True, executable='/bin/bash')
+
+
+def rhvh_iso_action(build):
+    build_name = os.path.basename(build)
+    build_name_ = build_name.replace("-RHVH-x86_64-dvd1.iso", "")
+    pre_cmd = "sudo python /home/dracher/bin/createrhvh40pxe.py pre {}".format(
+        build_name)
+    pxe_cmd = "python createrhvh40pxe.py pxe {}  {}".format(
+        build_name, build_name_)
+
+    os.system(pre_cmd)
+    os.system(pxe_cmd)
 
 
 if __name__ == '__main__':
@@ -245,6 +273,9 @@ if __name__ == '__main__':
     elif "image-update" in build and build.endswith('.rpm'):
         log.info("rhevh_ngn36_update_action start")
         rhevh_ngn36_update_action(build)
+    elif "RHVH-4.1-" in build and build.endswith('.iso'):
+        log.info("rhvh iso to pxe action start")
+        rhvh_iso_action(build)
     else:
         pass
 

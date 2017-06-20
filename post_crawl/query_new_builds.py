@@ -38,10 +38,12 @@ def add_download_job(url, opts=None):
     s = xmlrpclib.ServerProxy("http://10.66.10.22:6800/rpc")
     if not opts:
         opts = {"dir": "/var/www/builds/tmppmt"}
-    s.aria2.addUri([url, ], opts)
+    s.aria2.addUri([
+        url,
+    ], opts)
 
 
-class PostCrawlJob:
+class PostCrawlJob(object):
     """"""
 
     def __init__(self):
@@ -208,7 +210,8 @@ if __name__ == '__main__':
             prefix = links[0]
 
             opts = {
-                "dir": "/var/www/builds/rhevm/3.5/%s/el6" %
+                "dir":
+                "/var/www/builds/rhevm/3.5/%s/el6" %
                 prefix.rstrip('/').replace('/builds/', '')
             }
 
@@ -220,8 +223,8 @@ if __name__ == '__main__':
 
             pcj.mark_downloaded_true(pcj.rhevm35, i['build_name'])
             pcj.update_rhevms_host_info('35', i['build_name'],
-                                        i["build_pkg"].replace('.noarch.rpm',
-                                                               ''))
+                                        i["build_pkg"].replace(
+                                            '.noarch.rpm', ''))
 
     if ret_rhevm36:
         url_link = "http://bob.eng.lab.tlv.redhat.com%snoarch/%s"
@@ -230,8 +233,9 @@ if __name__ == '__main__':
             prefix = links[0]
 
             opts = {
-                "dir": "/var/www/builds/rhevm/%s" %
-                prefix.rstrip('/').replace('/builds/', '')
+                "dir":
+                "/var/www/builds/rhevm/%s" % prefix.rstrip('/').replace(
+                    '/builds/', '')
             }
 
             for url in links[1:]:
@@ -242,8 +246,8 @@ if __name__ == '__main__':
 
             pcj.mark_downloaded_true(pcj.rhevm36, i['build_name'])
             pcj.update_rhevms_host_info('36', i['build_name'],
-                                        i["build_pkg"].replace('.noarch.rpm',
-                                                               ''))
+                                        i["build_pkg"].replace(
+                                            '.noarch.rpm', ''))
 
     if ret_rhevm40:
         tower_cli = "/home/dracher/Projects/vEnvs/vScrapy/bin/tower-cli"
