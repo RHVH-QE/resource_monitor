@@ -6,3 +6,4 @@ project.egg-info
 *.sublime-project
 *.sublime-workspace
 .vscode
+.venv

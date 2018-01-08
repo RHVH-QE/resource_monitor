@@ -7,7 +7,9 @@ from resource_monitor.items import Rhvh4ISOItem
 
 class Rhvh4ISO(CrawlSpider):
     name = "rhvh4_iso"
-    allowed_domains = ["download-node-02.eng.bos.redhat.com", ]
+    allowed_domains = [
+        "download-node-02.eng.bos.redhat.com",
+    ]
 
     start_urls = [
         "http://download-node-02.eng.bos.redhat.com/devel/candidate-trees/",
@@ -15,8 +17,9 @@ class Rhvh4ISO(CrawlSpider):
 
     rules = (Rule(
         LxmlLinkExtractor(
-            restrict_xpaths=("//a[starts-with(@href, 'RHVH-4.1')]", ), ),
-        callback='parse_link', ), )
+            restrict_xpaths=("//a[starts-with(@href, 'RHVH-4.2')]", ), ),
+        callback='parse_link',
+    ), )
 
     def __init__(self, *args, **kwargs):
         super(Rhvh4ISO, self).__init__(*args, **kwargs)
