@@ -4,7 +4,7 @@ import requests
 from scrapy import Request
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors.lxmlhtml import LxmlLinkExtractor
-from resource_monitor.items import Rhevm35Item, Rhevm36Item, Rhevm40Item
+from resource_monitor.items import Rhevm35Item, Rhevm36Item, Rhevm40Item, Rhevm42Item
 from resource_monitor.usr_general_helpers import get_all_names_from_db
 from resource_monitor.settings import SPIDER_NAME_COLLECTION
 
@@ -27,26 +27,29 @@ def get_rhevm_release_status(*args):
 
 class Rhevm35(CrawlSpider):
     name = 'rhevm35'
-    allowed_domains = ['bob.eng.lab.tlv.redhat.com', ]
+    allowed_domains = [
+        'bob.eng.lab.tlv.redhat.com',
+    ]
 
-    start_urls = ['http://bob.eng.lab.tlv.redhat.com/builds', ]
+    start_urls = [
+        'http://bob.eng.lab.tlv.redhat.com/builds',
+    ]
 
-    rules = (
-        Rule(
-            LxmlLinkExtractor(restrict_xpaths=('//a[starts-with(@href, "vt")]',)),
-            callback='parse_single_build_page'
-        ),
-    )
+    rules = (Rule(
+        LxmlLinkExtractor(restrict_xpaths=('//a[starts-with(@href, "vt")]', )),
+        callback='parse_single_build_page'), )
 
     def __init__(self, *args, **kwargs):
         super(Rhevm35, self).__init__(*args, **kwargs)
-        self.all_names = get_all_names_from_db(SPIDER_NAME_COLLECTION[self.name], 'build_name')
+        self.all_names = get_all_names_from_db(
+            SPIDER_NAME_COLLECTION[self.name], 'build_name')
 
     def parse_single_build_page(self, response):
 
         item = Rhevm35Item()
 
-        item['build_name'] = response.xpath('//title/text()').extract()[0].split('/')[-1].strip()
+        item['build_name'] = response.xpath('//title/text()').extract()[
+            0].split('/')[-1].strip()
 
         if 'bad' in response.url \
                 or 'old' in response.url \
@@ -65,8 +68,11 @@ class Rhevm35(CrawlSpider):
     @staticmethod
     def get_repo_links(response):
         item = response.meta['item']
-        item['build_links'] = ','.join(dropwhile(lambda x: x.startswith('?'), response.xpath('//a/@href').extract()))
-        item['build_pkg'] = re.findall(r'(rhevm-\d\.\d.+?\.rpm)', item['build_links'])[0]
+        item['build_links'] = ','.join(
+            dropwhile(lambda x: x.startswith('?'),
+                      response.xpath('//a/@href').extract()))
+        item['build_pkg'] = re.findall(r'(rhevm-\d\.\d.+?\.rpm)',
+                                       item['build_links'])[0]
         item['build_downloaded'] = False
 
         yield item
@@ -75,20 +81,22 @@ class Rhevm35(CrawlSpider):
 class Rhevm36(CrawlSpider):
 
     name = 'rhevm36'
-    allowed_domains = ['bob.eng.lab.tlv.redhat.com', ]
+    allowed_domains = [
+        'bob.eng.lab.tlv.redhat.com',
+    ]
 
-    start_urls = ['http://bob.eng.lab.tlv.redhat.com/builds/3.6/', ]
+    start_urls = [
+        'http://bob.eng.lab.tlv.redhat.com/builds/3.6/',
+    ]
 
-    rules = (
-        Rule(
-            LxmlLinkExtractor(restrict_xpaths=('//a[starts-with(@href, "3")]',)),
-            callback='parse_single_build_page'
-        ),
-    )
+    rules = (Rule(
+        LxmlLinkExtractor(restrict_xpaths=('//a[starts-with(@href, "3")]', )),
+        callback='parse_single_build_page'), )
 
     def __init__(self, *args, **kwargs):
         super(Rhevm36, self).__init__(*args, **kwargs)
-        self.all_names = get_all_names_from_db(SPIDER_NAME_COLLECTION[self.name], 'build_name')
+        self.all_names = get_all_names_from_db(
+            SPIDER_NAME_COLLECTION[self.name], 'build_name')
 
     def parse_single_build_page(self, response):
 
@@ -104,15 +112,19 @@ class Rhevm36(CrawlSpider):
         if not get_rhevm_release_status('3.6', item['build_name']):
             return
 
-        request = Request("%sel6/noarch/" % response.url, callback=self.get_repo_links)
+        request = Request(
+            "%sel6/noarch/" % response.url, callback=self.get_repo_links)
         request.meta['item'] = item
 
         yield request
 
     def get_repo_links(self, response):
         item = response.meta['item']
-        item['build_links'] = ','.join(dropwhile(lambda x: x.startswith('?'), response.xpath('//a/@href').extract()))
-        item['build_pkg'] = re.findall(r'(rhevm-\d\.\d.+?\.rpm)', item['build_links'])[0]
+        item['build_links'] = ','.join(
+            dropwhile(lambda x: x.startswith('?'),
+                      response.xpath('//a/@href').extract()))
+        item['build_pkg'] = re.findall(r'(rhevm-\d\.\d.+?\.rpm)',
+                                       item['build_links'])[0]
         item['build_downloaded'] = False
 
         yield item
@@ -120,12 +132,17 @@ class Rhevm36(CrawlSpider):
 
 class Rhevm40(CrawlSpider):
     name = 'rhevm40'
-    allowed_domains = ['bob.eng.lab.tlv.redhat.com', ]
-    start_urls = ['http://bob.eng.lab.tlv.redhat.com/builds/latest_4.0/release_status.txt', ]
+    allowed_domains = [
+        'bob.eng.lab.tlv.redhat.com',
+    ]
+    start_urls = [
+        'http://bob.eng.lab.tlv.redhat.com/builds/latest_4.0/release_status.txt',
+    ]
 
     def __init__(self, *args, **kwargs):
         super(Rhevm40, self).__init__(*args, **kwargs)
-        self.all_names = get_all_names_from_db(SPIDER_NAME_COLLECTION[self.name], 'build_name')
+        self.all_names = get_all_names_from_db(
+            SPIDER_NAME_COLLECTION[self.name], 'build_name')
 
     def parse_start_url(self, response):
         r_body = response.body
@@ -138,7 +155,8 @@ class Rhevm40(CrawlSpider):
         else:
             item['build_name'] = "ERROR"
 
-        item['build_links'] = 'http://bob.eng.lab.tlv.redhat.com/builds/latest_4.0/rhev-release-latest-4.0.noarch.rpm'
+        item[
+            'build_links'] = 'http://bob.eng.lab.tlv.redhat.com/builds/latest_4.0/rhev-release-latest-4.0.noarch.rpm'
 
         if "Ready" not in r_body \
                 or item['build_name'] in self.all_names:
@@ -146,6 +164,31 @@ class Rhevm40(CrawlSpider):
 
         item['build_downloaded'] = False
 
+        yield item
+
+
+class Rhevm42(CrawlSpider):
+    name = 'rhevm42'
+    allowed_domains = [
+        'bob.eng.lab.tlv.redhat.com',
+    ]
+    start_urls = [
+        'http://bob.eng.lab.tlv.redhat.com/builds/latest_4.2/release_status.txt',
+    ]
+
+    def __init__(self, *args, **kwargs):
+        super(Rhevm42, self).__init__(*args, **kwargs)
+        self.all_names = get_all_names_from_db(
+            SPIDER_NAME_COLLECTION[self.name], 'build_name')
+
+    def parse_start_url(self, response):
+        r_body = response.body
+        ret = r_body.split('\n')[0].split(':')
+        item = Rhevm42Item()
+        item['build_status'] = ret[-1]
+        item['build_name'] = ret[-2]
+        if "Ready" not in ret[-1] or ret[-2] in self.all_names:
+            return
         yield item
 
 
