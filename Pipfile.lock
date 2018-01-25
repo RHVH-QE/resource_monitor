@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "136dcecb9f3b1490bbed12a3def92903d4ac5b1b4f1736c301ff9d41be2ec9c4"
+            "sha256": "31b8fc0184e8c693fdf345c7583ecc4192f7f17b0033e8ca4daf4d0c4ad944cb"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -136,6 +136,12 @@
             "hashes": [
                 "sha256:3b5103e8789da9e936a68d993b70df732d06b8bb9a337a05ed4eb52c17ef7206",
                 "sha256:066d8bc5229af09617e24b3ca4d52f1f9092d9e061931f4184cd572885c23204"
+            ],
+            "version": "==1.0.3"
+        },
+        "easysendemail": {
+            "hashes": [
+                "sha256:dd346ae1c411936c6d785af4a21839fd0680cc95b6e02cf5065e42ab67d8d1b7"
             ],
             "version": "==1.0.3"
         },
@@ -325,6 +331,20 @@
                 "sha256:31a0bf05d43198afaf3acfb9b4fb0c09c1d7d7ff641e58c66e36117f26c4b755"
             ],
             "version": "==1.5.0"
+        },
+        "scrapyd": {
+            "hashes": [
+                "sha256:4983898bd6b6c53735cfa9e92e166c1d89d5c108a36ae2959c5cae914dc61887",
+                "sha256:c7189100759e60ee5ae7fec1f040a6be88e20fbbd353ac07db6a78d729bada7f"
+            ],
+            "version": "==1.2.0"
+        },
+        "scrapyd-client": {
+            "hashes": [
+                "sha256:caa0f5369c2e1efa7b79c309afb9819b2518870c5f4f2caf84d3e474cd6a9890",
+                "sha256:e547475c5c8dbd811e2cc4141a0e7b4ba47600e9980c59df4f831bb60b94e4cb"
+            ],
+            "version": "==1.1.0"
         },
         "service-identity": {
             "hashes": [

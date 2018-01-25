@@ -5,6 +5,27 @@ import time
 import xmlrpclib
 import pymongo
 
+import smtplib
+
+# Here are the email package modules we'll need
+
+from email.mime.multipart import MIMEMultipart
+
+
+def send_mail(v, s):
+    to_list = ['dguo@redhat.com', 'rhvh-qe@redhat.com']
+    # Create the container (outer) email message.
+    msg = MIMEMultipart()
+    msg['Subject'] = 'New rhevm %s is %s' % (v, s)
+
+    msg['From'] = "yaniwang@redhat.com"
+    msg['To'] = ', '.join(to_list)
+
+    s = smtplib.SMTP('smtp.corp.redhat.com')
+    s.sendmail("yaniwang@redhat.com", to_list, msg.as_string())
+    s.quit()
+
+
 _MONGOURI_TEST = 'mongodb://127.0.0.1:27017'
 _MONGOURI_PROD = 'mongodb://meteor:redhat@10.66.10.22/meteordb?authMechanism=SCRAM-SHA-1'
 MONGO_URI = _MONGOURI_PROD
@@ -24,6 +45,7 @@ SPIDER_NAME_COLLECTION = sac = {
     'rhevm35': 'resources.rhevm35',
     'rhevm36': 'resources.rhevm36',
     'rhevm40': 'resources.rhevm40',
+    'rhevm42': 'resources.rhevm42',
     'rhevh36ngn': 'resources.rhevh36ngn',
     'ngn36': 'resources.ovirtnodengn36',
     'ngn40': 'resources.ovirtnodengn40',
@@ -57,6 +79,7 @@ class PostCrawlJob(object):
         self.rhevm35 = self.db[sac['rhevm35']]
         self.rhevm36 = self.db[sac['rhevm36']]
         self.rhevm40 = self.db[sac['rhevm40']]
+        self.rhevm42 = self.db[sac['rhevm42']]
         self.rhevms = self.db['rhevms']
         self.ngn36 = self.db[sac['ngn36']]
         self.ngn40 = self.db[sac['ngn40']]
@@ -144,17 +167,21 @@ class PostCrawlJob(object):
     def mark_downloaded_true(collection, build_name):
         collection.update({
             "build_name": build_name
-        }, {"$set": {
-            "build_downloaded": True
-        }})
+        }, {
+            "$set": {
+                "build_downloaded": True
+            }
+        })
 
     def update_rhevms_host_info(self, tag, x, y):
         self.rhevms.update_many({
             'tag': tag
-        }, {"$set": {
-            "rhevm_version": x,
-            "package_version": y
-        }})
+        }, {
+            "$set": {
+                "rhevm_version": x,
+                "package_version": y
+            }
+        })
 
 
 if __name__ == '__main__':
@@ -166,6 +193,7 @@ if __name__ == '__main__':
     ret_rhevm35 = pcj.get_new_rhevm(pcj.rhevm35)
     ret_rhevm36 = pcj.get_new_rhevm(pcj.rhevm36)
     ret_rhevm40 = pcj.get_new_rhevm(pcj.rhevm40)
+    ret_rhevm42 = pcj.get_new_rhevm(pcj.rhevm42)
     ret_ngn36 = pcj.get_new_ngn(pcj.ngn36)
     ret_ngn40 = pcj.get_new_ngn(pcj.ngn40)
     ret_ngnmaster = pcj.get_new_ngn(pcj.ngnmaster)
@@ -200,7 +228,9 @@ if __name__ == '__main__':
         for i in retrma:
             add_download_job(
                 i['build_rpm_url'],
-                opts={"dir": "/var/www/builds/rhevm-appliance"})
+                opts={
+                    "dir": "/var/www/builds/rhevm-appliance"
+                })
             pcj.mark_downloaded_true(pcj.rhevma, i['build_name'])
 
     if ret_rhevm35:
@@ -290,3 +320,8 @@ if __name__ == '__main__':
                 iso_url_tpl.format(i['build_name'], i['build_name']),
                 opts=dst_dir)
             pcj.mark_downloaded_true(pcj.rhvh_iso, i['build_name'])
+
+    if ret_rhevm42:
+        for i in ret_rhevm42:
+            send_mail(i.get('build_name'), i.get('build_status'))
+            pcj.mark_downloaded_true(pcj.rhevm42, i['build_name'])

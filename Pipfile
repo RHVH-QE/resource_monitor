@@ -10,6 +10,9 @@ name = "pypi"
 scrapy = "*"
 pymongo = "*"
 requests = "*"
+scrapyd = "*"
+scrapyd-client = "*"
+easysendemail = "*"
 
 
 [dev-packages]

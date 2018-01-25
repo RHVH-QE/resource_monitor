@@ -184,11 +184,13 @@ class Rhevm42(CrawlSpider):
     def parse_start_url(self, response):
         r_body = response.body
         ret = r_body.split('\n')[0].split(':')
+        if "Ready" not in ret[-1] or ret[-2] in self.all_names:
+            return
         item = Rhevm42Item()
         item['build_status'] = ret[-1]
         item['build_name'] = ret[-2]
-        if "Ready" not in ret[-1] or ret[-2] in self.all_names:
-            return
+        item['build_downloaded'] = False
+
         yield item
 
 
