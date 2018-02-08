@@ -26,6 +26,7 @@ ITEM_PIPELINES = {
 }
 
 SPIDER_NAME_COLLECTION = {
+    'cockpit_ovirt': 'resources.cockpit_ovirt',
     'rhevm_appliance': 'resources.rhevm_appliance',
     'rhevh7': 'resources.rhevh7',
     'rhevh6': 'resources.rhevh6',

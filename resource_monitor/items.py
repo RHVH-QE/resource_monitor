@@ -103,3 +103,10 @@ class OvirtNodeNgnItem(scrapy.Item):
 class Rhvh4ISOItem(scrapy.Item):
     build_name = scrapy.Field()
     build_downloaded = scrapy.Field()
+
+class CockpitOvirtItem(scrapy.Item):
+    build_name = scrapy.Field()
+    build_tag = scrapy.Field()
+    build_status = scrapy.Field()
+    build_downloaded = scrapy.Field()
+    build_rpm_url = scrapy.Field()
